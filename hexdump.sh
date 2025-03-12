@@ -2,7 +2,8 @@
 
 # Set the root directory for model files
 #MODEL_DIR="models"
-MODEL_DIR="models_ib"
+MODEL_DIR="models_custom"
+#MODEL_DIR="models_ib"
 
 # Install xxd if it is not available
 # apt-get -qq install xxd
