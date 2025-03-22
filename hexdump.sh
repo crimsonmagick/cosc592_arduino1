@@ -1,6 +1,7 @@
 
 # Set the root directory for model files
 #MODEL_DIR="models"
+#MODEL_DIR="models_complex"
 MODEL_DIR="models_complex"
 #MODEL_DIR="models_ib"
 

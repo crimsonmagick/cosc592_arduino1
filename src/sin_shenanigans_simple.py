@@ -91,6 +91,9 @@ converter = tf.lite.TFLiteConverter.from_keras_model(model)
 # Indicate that we want to perform the default optimizations,
 # which include quantization
 converter.optimizations = [tf.lite.Optimize.DEFAULT]
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type = tf.int8
+converter.inference_output_type = tf.int8
 
 # Define a generator function that provides our test data's x values
 # as a representative dataset, and tell the converter to use it

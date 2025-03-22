@@ -37,12 +37,12 @@ plt.legend()
 plt.show()
 
 model = tf.keras.Sequential()
-model.add(keras.layers.Dense(8, activation='relu', input_shape=(1,)))
+model.add(keras.layers.Dense(16, activation='relu', input_shape=(1,)))
 model.add(keras.layers.Dense(16, activation='relu'))
-model.add(keras.layers.Dense(32, activation='relu'))
+model.add(keras.layers.Dense(128, activation='relu'))
 model.add(keras.layers.Dense(16, activation='relu'))
 model.add(keras.layers.Dense(1))
-model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+model.compile(optimizer='adam', loss="mse", metrics=["mae"])
 
 
 history = model.fit(x_train, y_train, epochs=500, batch_size=64,
@@ -97,6 +97,10 @@ def representative_dataset_generator():
   for value in x_test:
     yield [np.array(value, dtype=np.float32, ndmin=2)]
 converter.representative_dataset = representative_dataset_generator
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type = tf.int8  # Optional: Omit to keep I/O as float
+converter.inference_output_type = tf.int8  # Optional: Omit to keep I/O as float
+
 # Convert the model
 tflite_model = converter.convert()
 # Save the model to disk
@@ -108,3 +112,37 @@ quantized_model_size = os.path.getsize(f"../{MODELS_DIR}/sine_model_quantized.tf
 print("Quantized model is %d bytes" % quantized_model_size)
 difference = basic_model_size - quantized_model_size
 print("Difference is %d bytes" % difference)
+
+def predict(x_data):
+    predictions = []
+    for x in x_data:
+        # Set the input tensor
+        interpreter.set_tensor(input_details[0]['index'], np.array([[x]], dtype=np.float32))
+        interpreter.invoke()
+        # Get the output tensor
+        output = interpreter.get_tensor(output_details[0]['index'])
+        predictions.append(output[0][0])
+    return np.array(predictions)
+
+MODELS_DIR = 'models_complex'
+MODELS_DIR_RELATIVE = f'../{MODELS_DIR}/'
+
+interpreter = tf.lite.Interpreter(model_path=f"{MODELS_DIR_RELATIVE}/sine_model_quantized.tflite")
+interpreter.allocate_tensors()
+
+print('yay i didnt crash')
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
+nonquantized_predictions = model.predict(x_test)
+quantized_predictions = predict(x_test)
+plt.figure(figsize=(10, 6))
+plt.title('Quantized Model Predictions vs Actual Values')
+plt.plot(x_test, y_test, 'b.', label='Actual')
+plt.plot(x_test, nonquantized_predictions, 'g.', label='Model Prediction')
+plt.plot(x_test, quantized_predictions, 'r.', label='Quantized Model Prediction')
+plt.legend()
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
