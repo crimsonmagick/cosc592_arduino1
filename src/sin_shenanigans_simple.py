@@ -1,7 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import math
 import os
@@ -13,7 +12,6 @@ x_values = np.random.uniform(low=0, high=2 * math.pi, size=SAMPLES).astype(
 
 np.random.shuffle(x_values)
 
-# y_values = np.sin(2 * x_values).astype(np.float32)
 y_values = np.sin(x_values).astype(np.float32)
 
 plt.plot(x_values, y_values, 'b.')
@@ -36,15 +34,8 @@ plt.plot(x_validate, y_validate, 'y.', label="Validate")
 plt.legend()
 plt.show()
 
-# model = tf.keras.Sequential()
-# model.add(keras.layers.Dense(16, activation='tanh', input_shape=(1,)))
-# model.add(keras.layers.Dense(32, activation='tanh'))
-# model.add(keras.layers.Dense(256, activation='tanh'))
-# model.add(keras.layers.Dense(32, activation='tanh'))
-# model.add(keras.layers.Dense(1))
 model = tf.keras.Sequential()
-model.add(keras.layers.Dense(8, activation='tanh', input_shape=(1,)))
-model.add(keras.layers.Dense(8, activation='tanh', input_shape=(1,)))
+model.add(keras.layers.Dense(10, activation='relu', input_shape=(1,)))
 model.add(keras.layers.Dense(1))
 model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 
