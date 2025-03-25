@@ -107,8 +107,8 @@
 
     \begin{lstlisting}[label={lst:qin}]
     converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-    converter.inference_input_type = tf.int8  # Optional: Omit to keep I/O as float
-    converter.inference_output_type = tf.int8  # Optional: Omit to keep I/O as float
+    converter.inference_input_type = tf.int8
+    converter.inference_output_type = tf.int8
     \end{lstlisting}
 
     Updated the Arduino loop accordingly:
@@ -120,10 +120,7 @@
 
     After an initial test where the results almost looked reasonable, retraining and redeploying proved that there was no change in the inaccuracies.
 
-    To debug, I first added more extensive logging to the application just to make sure I understood the data correctly:
-
-    \begin{lstlisting}[label={lst:print}]
-    \end{lstlisting}
+    To debug, I first added more extensive logging to the application just to make sure I understood the data correctly.
 
     Each time I would train a network, I would get wildly different results.
     It couldn't be due to normal quantization errors - the results were just plain wrong.

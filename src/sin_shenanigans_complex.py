@@ -42,7 +42,7 @@ model.add(keras.layers.Dense(16, activation='relu'))
 model.add(keras.layers.Dense(1))
 model.compile(optimizer='adam', loss="mse", metrics=["mae"])
 
-history = model.fit(x_train, y_train, epochs=50, batch_size=64,
+history = model.fit(x_train, y_train, epochs=500, batch_size=64,
                         validation_data=(x_validate, y_validate))
 
 train_loss = history.history['loss']
@@ -94,9 +94,6 @@ def representative_dataset_generator():
   for value in x_test:
     yield [np.array(value, dtype=np.float32, ndmin=2)]
 converter.representative_dataset = representative_dataset_generator
-# converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-# converter.inference_input_type = tf.int8  # Optional: Omit to keep I/O as float
-# converter.inference_output_type = tf.int8  # Optional: Omit to keep I/O as float
 
 # Convert the model
 tflite_model = converter.convert()
