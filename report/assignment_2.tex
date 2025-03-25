@@ -120,10 +120,9 @@
 
     After an initial test where the results almost looked reasonable, retraining and redeploying proved that there was no change in the inaccuracies.
 
-    To debug, I first added more extensive logging to the application just to make sure I understood the data correctly.
-
-    Each time I would train a network, I would get wildly different results.
-    It couldn't be due to normal quantization errors - the results were just plain wrong.
+    To debug, I first logged the raw position, x, and y values for a sanity check.
+    This confirmed that each time I trained a network, I would get wildly different results.
+    It couldn't be due to normal quantization errors - the results were just plain wrong and concerningly random.
 
     I figured this had to be due to something going wrong when converting the model to TFLite and quantizing, since the model validation and test data points proved the models were adequate/reasonable.
 
