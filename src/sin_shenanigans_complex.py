@@ -42,7 +42,7 @@ model.add(keras.layers.Dense(16, activation='relu'))
 model.add(keras.layers.Dense(1))
 model.compile(optimizer='adam', loss="mse", metrics=["mae"])
 
-history = model.fit(x_train, y_train, epochs=500, batch_size=64,
+history = model.fit(x_train, y_train, epochs=50, batch_size=64,
                         validation_data=(x_validate, y_validate))
 
 train_loss = history.history['loss']
@@ -109,3 +109,32 @@ quantized_model_size = os.path.getsize(f"../{MODELS_DIR}/sine_model_quantized.tf
 print("Quantized model is %d bytes" % quantized_model_size)
 difference = basic_model_size - quantized_model_size
 print("Difference is %d bytes" % difference)
+
+def predict(x_data):
+  predictions = []
+  for x in x_data:
+    # Set the input tensor
+    interpreter.set_tensor(input_details[0]['index'], np.array([[x]], dtype=np.float32))
+    interpreter.invoke()
+    # Get the output tensor
+    output = interpreter.get_tensor(output_details[0]['index'])
+    predictions.append(output[0][0])
+  return np.array(predictions)
+
+interpreter = tf.lite.Interpreter(model_path=f"{MODELS_DIR_RELATIVE}/sine_model_quantized.tflite")
+interpreter.allocate_tensors()
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
+nonquantized_predictions = model.predict(x_test)
+quantized_predictions = predict(x_test)
+plt.figure(figsize=(10, 6))
+plt.title('Quantized Model Predictions vs Actual Values')
+plt.plot(x_test, y_test, 'b.', label='Actual')
+plt.plot(x_test, nonquantized_predictions, 'g.', label='Model Prediction')
+plt.plot(x_test, quantized_predictions, 'r.', label='Quantized Model Prediction')
+plt.legend()
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
