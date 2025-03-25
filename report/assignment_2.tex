@@ -132,10 +132,8 @@
     def predict(x_data):
       predictions = []
       for x in x_data:
-        # Set the input tensor
         interpreter.set_tensor(input_details[0]['index'], np.array([[x]], dtype=np.float32))
         interpreter.invoke()
-        # Get the output tensor
         output = interpreter.get_tensor(output_details[0]['index'])
         predictions.append(output[0][0])
       return np.array(predictions)
@@ -224,6 +222,10 @@
 
     \section{Github Repo}\label{sec:deliverables}
     My messy repo can be found here \href{https://github.com/crimsonmagick/cosc592\_arduino1.git}{here on Github}.
+
+    \section{ChatGPT}\label{sec:chatgpt}
+
+    I used ChatGPT to help with getting the TFLite interpreter working for comparing the quantized model against the original.
 
     \bibliographystyle{plainurl}
     \bibliography{bibliography}
